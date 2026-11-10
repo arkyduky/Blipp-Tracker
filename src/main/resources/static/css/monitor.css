@@ -1,0 +1,1144 @@
+/* Safety Net - Parent Live Monitor Stylesheet
+ * Faithfully reproducing the Stitch visual system & design tokens.
+ */
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=IBM+Plex+Mono:wght@500;600&display=swap');
+
+:root {
+    --font-sans: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    --font-mono: 'IBM Plex Mono', monospace;
+
+    /* Surface & Canvas Tokens */
+    --surface-bg: #f8f9ff;
+    --surface-card: #ffffff;
+    --surface-container-lowest: #ffffff;
+    --surface-container-low: #eff4ff;
+    --surface-container: #e5eeff;
+    --surface-container-high: #dce9ff;
+    --surface-container-highest: #d3e4fe;
+
+    /* Primary Navy Hierarchy */
+    --primary: #00236f;
+    --on-primary: #ffffff;
+    --primary-container: #1e3a8a;
+    --on-primary-container: #90a8ff;
+    --primary-fixed: #dce1ff;
+    --on-primary-fixed: #00164e;
+
+    /* Secondary Emerald (Safety / Verified) Hierarchy */
+    --secondary: #006c49;
+    --on-secondary: #ffffff;
+    --secondary-container: #6cf8bb;
+    --on-secondary-container: #00714d;
+    --secondary-pill-bg: rgba(108, 248, 187, 0.25);
+    --secondary-pill-text: #006c49;
+
+    /* Status Alert Tones */
+    --warning: #b45309;
+    --warning-bg: #fffbeb;
+    --warning-border: #fde68a;
+    --warning-icon-bg: #fef3c7;
+
+    --error: #ba1a1a;
+    --error-bg: #ffdad6;
+    --error-border: #ffb4ab;
+    --error-icon-bg: #fecaca;
+
+    /* Neutral & Text Layers */
+    --on-surface: #0b1c30;
+    --on-surface-variant: #444651;
+    --text-muted: #757682;
+    --outline: #757682;
+    --outline-variant: #c5c5d3;
+    --border: #e2e8f0;
+
+    /* Elevation & Shadows */
+    --shadow-sm: 0 1px 3px rgba(15, 23, 42, 0.05), 0 1px 2px rgba(15, 23, 42, 0.03);
+    --shadow-md: 0 4px 12px -2px rgba(15, 23, 42, 0.06), 0 2px 6px -1px rgba(15, 23, 42, 0.04);
+    --shadow-lg: 0 12px 32px -4px rgba(15, 23, 42, 0.08), 0 4px 12px -2px rgba(15, 23, 42, 0.03);
+    --shadow-xl: 0 20px 40px -8px rgba(11, 28, 48, 0.08);
+}
+
+*, *::before, *::after {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+body.monitor-body {
+    font-family: var(--font-sans);
+    background: var(--surface-bg);
+    color: var(--on-surface);
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    -webkit-font-smoothing: antialiased;
+}
+
+/* ==========================================================================
+   Header (Top Fixed Navigation Bar)
+   ========================================================================== */
+.monitor-header {
+    height: 64px;
+    background: rgba(255, 255, 255, 0.92);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    border-bottom: 1px solid rgba(226, 232, 240, 0.8);
+    box-shadow: 0 1px 8px rgba(15, 23, 42, 0.04);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 24px;
+    z-index: 1000;
+    flex-shrink: 0;
+}
+
+.header-left {
+    display: flex;
+    align-items: center;
+    gap: 28px;
+}
+
+.brand-group {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    text-decoration: none;
+}
+
+.brand-icon-box {
+    width: 34px;
+    height: 34px;
+    border-radius: 8px;
+    background: var(--primary-container);
+    color: var(--on-primary);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: var(--shadow-sm);
+}
+
+.brand-title {
+    font-size: 20px;
+    font-weight: 700;
+    color: var(--primary);
+    letter-spacing: -0.02em;
+}
+
+.header-nav {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.nav-tab {
+    font-size: 14px;
+    font-weight: 500;
+    color: var(--on-surface-variant);
+    text-decoration: none;
+    padding: 6px 14px;
+    border-radius: 8px;
+    transition: all 0.15s ease;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.nav-tab.active {
+    background: var(--primary-container);
+    color: var(--on-primary);
+    font-weight: 600;
+}
+
+
+.header-right {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+/* ==========================================================================
+   Safety Connections Profile Button & Popover
+   ========================================================================== */
+.profile-wrapper {
+    position: relative;
+    display: flex;
+    align-items: center;
+}
+
+.profile-btn {
+    width: 34px;
+    height: 34px;
+    border-radius: 50%;
+    background: var(--primary);
+    color: var(--on-primary);
+    border: none;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: var(--shadow-sm);
+    transition: background 0.15s ease, transform 0.15s ease;
+}
+
+.profile-btn:hover {
+    background: var(--primary-container);
+    transform: scale(1.04);
+}
+
+.connections-popover {
+    position: absolute;
+    top: calc(100% + 10px);
+    right: 0;
+    width: 320px;
+    background: var(--surface-card);
+    border-radius: 14px;
+    border: 1px solid var(--border);
+    box-shadow: var(--shadow-xl);
+    padding: 16px;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    z-index: 1050;
+    animation: fadeInSlide 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.connections-popover.hidden {
+    display: none !important;
+}
+
+@keyframes fadeInSlide {
+    from { opacity: 0; transform: translateY(-8px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+.popover-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding-bottom: 8px;
+    border-bottom: 1px solid var(--border);
+}
+
+.popover-heading {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--on-surface);
+}
+
+.popover-heading .text-primary {
+    color: var(--primary);
+}
+
+.popover-close-btn {
+    background: transparent;
+    border: none;
+    color: var(--on-surface-variant);
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 2px;
+    border-radius: 4px;
+}
+
+.popover-close-btn:hover {
+    color: var(--on-surface);
+    background: var(--surface-container-low);
+}
+
+.popover-body {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.popover-field {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.field-meta {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.field-label {
+    font-size: 11px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    color: var(--on-surface-variant);
+}
+
+.connection-chip {
+    font-size: 11px;
+    font-weight: 600;
+    padding: 2px 8px;
+    border-radius: 9999px;
+}
+
+.connection-chip.connected {
+    background: var(--secondary-pill-bg);
+    color: var(--secondary);
+}
+
+.connection-chip.unlinked {
+    background: var(--surface-container-high);
+    color: var(--text-muted);
+}
+
+.field-input-row {
+    display: flex;
+    gap: 6px;
+}
+
+.field-input {
+    flex: 1;
+    min-width: 0;
+    padding: 6px 10px;
+    font-size: 13px;
+    font-family: var(--font-sans);
+    background: var(--surface-container-low);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    color: var(--on-surface);
+    outline: none;
+    transition: border-color 0.15s ease;
+}
+
+.field-input:focus {
+    border-color: var(--primary-container);
+}
+
+.field-save-btn {
+    padding: 6px 12px;
+    font-size: 12px;
+    font-weight: 600;
+    background: var(--primary);
+    color: var(--on-primary);
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: background 0.15s ease;
+}
+
+.field-save-btn:hover {
+    background: var(--primary-container);
+}
+
+.popover-note {
+    display: flex;
+    align-items: flex-start;
+    gap: 6px;
+    padding-top: 8px;
+    border-top: 1px solid var(--border);
+    font-size: 11px;
+    color: var(--text-muted);
+    line-height: 1.4;
+}
+
+.popover-note .note-icon {
+    font-size: 15px;
+    color: var(--outline);
+    flex-shrink: 0;
+    margin-top: 1px;
+}
+
+/* ==========================================================================
+   Main Workspace Layout
+   ========================================================================== */
+.monitor-layout {
+    flex: 1;
+    display: flex;
+    position: relative;
+    overflow: hidden;
+}
+
+/* ==========================================================================
+   Map Canvas (Edge-to-Edge Spatial Layer)
+   ========================================================================== */
+.map-container {
+    flex: 1;
+    height: 100%;
+    position: relative;
+    background: #e9effb;
+}
+
+#map {
+    width: 100%;
+    height: 100%;
+    z-index: 10;
+}
+
+/* Map Status Overlay (Top-Left) */
+.map-status-overlay {
+    position: absolute;
+    top: 20px;
+    left: 20px;
+    z-index: 500;
+    pointer-events: none;
+}
+
+.gps-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 8px 16px;
+    border-radius: 9999px;
+    font-size: 12px;
+    font-weight: 600;
+    box-shadow: var(--shadow-md);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    pointer-events: auto;
+    transition: all 0.25s ease;
+}
+
+.gps-badge.waiting {
+    background: rgba(255, 255, 255, 0.94);
+    color: var(--on-surface-variant);
+    border: 1px solid rgba(226, 232, 240, 0.9);
+}
+
+.gps-badge.waiting .gps-badge-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: #f59e0b;
+}
+
+.gps-badge.active {
+    background: rgba(0, 108, 73, 0.95);
+    color: #ffffff;
+    border: 1px solid rgba(108, 248, 187, 0.4);
+}
+
+.gps-badge.active .gps-badge-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: #6cf8bb;
+    animation: livePing 1.8s cubic-bezier(0, 0, 0.2, 1) infinite;
+}
+
+/* Floating Controls (Bottom-Left) */
+.map-floating-controls {
+    position: absolute;
+    bottom: 24px;
+    left: 24px;
+    z-index: 500;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.map-control-btn {
+    background: rgba(255, 255, 255, 0.95);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border: 1px solid rgba(226, 232, 240, 0.9);
+    box-shadow: var(--shadow-md);
+    cursor: pointer;
+    transition: all 0.15s ease;
+}
+
+.recenter-btn {
+    height: 44px;
+    padding: 0 16px;
+    border-radius: 12px;
+    color: var(--primary);
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 14px;
+    font-weight: 600;
+}
+
+.recenter-btn:hover {
+    background: #ffffff;
+    transform: translateY(-1px);
+    box-shadow: var(--shadow-lg);
+}
+
+.recenter-label {
+    white-space: nowrap;
+}
+
+.map-zoom-group {
+    display: flex;
+    flex-direction: column;
+    border-radius: 12px;
+    overflow: hidden;
+    background: rgba(255, 255, 255, 0.95);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border: 1px solid rgba(226, 232, 240, 0.9);
+    box-shadow: var(--shadow-md);
+}
+
+.zoom-btn {
+    width: 44px;
+    height: 44px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--on-surface-variant);
+    border: none;
+    background: transparent;
+}
+
+.zoom-btn:first-child {
+    border-bottom: 1px solid rgba(226, 232, 240, 0.6);
+}
+
+.zoom-btn:hover {
+    background: var(--surface-container-low);
+    color: var(--on-surface);
+}
+
+/* ==========================================================================
+   Leaflet Custom DivIcon Markers & Popups
+   ========================================================================== */
+.custom-pin {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    color: #ffffff;
+    font-weight: 700;
+    font-family: var(--font-sans);
+    border: 2px solid #ffffff;
+    box-shadow: 0 3px 10px rgba(11, 28, 48, 0.25);
+    box-sizing: border-box;
+}
+
+.custom-pin.origin {
+    background: #006c49;
+    font-size: 12px;
+}
+
+.custom-pin.destination {
+    background: #00236f;
+    font-size: 13px;
+    box-shadow: 0 4px 12px rgba(0, 35, 111, 0.35);
+}
+
+.custom-pin.checkpoint-passed {
+    background: #006c49;
+    font-size: 11px;
+}
+
+.custom-pin.checkpoint-next {
+    background: #1e3a8a;
+    font-size: 11px;
+    box-shadow: 0 0 0 4px rgba(30, 58, 138, 0.25);
+    animation: nextCpPulse 2s infinite;
+}
+
+.custom-pin.checkpoint-future {
+    background: #757682;
+    font-size: 11px;
+    opacity: 0.85;
+}
+
+@keyframes nextCpPulse {
+    0% { box-shadow: 0 0 0 0 rgba(30, 58, 138, 0.5); }
+    70% { box-shadow: 0 0 0 10px rgba(30, 58, 138, 0); }
+    100% { box-shadow: 0 0 0 0 rgba(30, 58, 138, 0); }
+}
+
+/* Rider Beacon Marker (Stitch Parity) */
+.rider-marker-wrapper {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    cursor: pointer;
+    user-select: none;
+}
+
+.rider-beacon-tag {
+    background: #ffffff;
+    color: var(--on-surface);
+    padding: 3px 10px;
+    border-radius: 9999px;
+    box-shadow: 0 3px 10px rgba(15, 23, 42, 0.15);
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    white-space: nowrap;
+    margin-bottom: 6px;
+    transform: translateY(-2px);
+    border: 1px solid rgba(226, 232, 240, 0.8);
+}
+
+.rider-tag-dot {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: var(--secondary);
+    animation: livePing 1.6s infinite;
+}
+
+.rider-tag-name {
+    font-size: 12px;
+    font-weight: 700;
+    color: var(--primary);
+}
+
+.rider-tag-loc {
+    font-size: 11px;
+    color: var(--on-surface-variant);
+    font-weight: 400;
+}
+
+.rider-beacon-pin {
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.rider-radar-halo {
+    position: absolute;
+    width: 44px;
+    height: 44px;
+    border-radius: 50%;
+    background: rgba(0, 108, 73, 0.2);
+    animation: livePing 2s infinite;
+}
+
+.rider-core-pin {
+    position: relative;
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    background: var(--primary);
+    color: var(--on-primary);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: 3px solid #ffffff;
+    box-shadow: 0 4px 14px rgba(0, 35, 111, 0.35);
+}
+
+.rider-heading-icon {
+    font-size: 18px;
+    line-height: 1;
+    transform: rotate(32deg);
+}
+
+@keyframes livePing {
+    0% { transform: scale(0.9); opacity: 0.9; }
+    50% { transform: scale(1.4); opacity: 0.3; }
+    100% { transform: scale(1.8); opacity: 0; }
+}
+
+/* Custom Leaflet Tooltips for Checkpoints (Stitch Parity) */
+.stitch-map-label {
+    background: rgba(255, 255, 255, 0.92) !important;
+    border: 1px solid rgba(226, 232, 240, 0.9) !important;
+    border-radius: 6px !important;
+    box-shadow: var(--shadow-sm) !important;
+    font-family: var(--font-sans) !important;
+    padding: 3px 8px !important;
+    color: var(--on-surface) !important;
+    font-size: 11px !important;
+    font-weight: 600 !important;
+}
+
+.stitch-map-label::before {
+    display: none !important;
+}
+
+/* ==========================================================================
+   Guardian Telemetry Sidebar (430px Fixed Width)
+   ========================================================================== */
+.monitor-sidebar {
+    width: 430px;
+    flex-shrink: 0;
+    height: 100%;
+    overflow-y: auto;
+    background: var(--surface-card);
+    border-left: 1px solid var(--border);
+    box-shadow: var(--shadow-xl);
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    padding: 24px;
+    z-index: 30;
+}
+
+.sidebar-top-section {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+
+/* Card Common */
+.monitor-card {
+    background: var(--surface-container-low);
+    border-radius: 12px;
+    padding: 16px;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.card-eyebrow {
+    font-size: 11px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    color: var(--on-surface-variant);
+}
+
+/* Traveler Header Card */
+.rider-header-card {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 12px;
+    padding-bottom: 2px;
+}
+
+.rider-info-left {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    min-width: 0;
+}
+
+.rider-avatar-box {
+    width: 48px;
+    height: 48px;
+    border-radius: 50%;
+    background: var(--primary-fixed);
+    color: var(--primary);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    box-shadow: var(--shadow-sm);
+}
+
+.rider-name-box {
+    min-width: 0;
+}
+
+.rider-name {
+    font-size: 20px;
+    font-weight: 700;
+    color: var(--primary);
+    line-height: 1.2;
+    letter-spacing: -0.01em;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.route-subtitle {
+    font-size: 13px;
+    color: var(--on-surface-variant);
+    margin-top: 2px;
+    font-weight: 400;
+}
+
+.rider-status-right {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    gap: 4px;
+}
+
+.live-pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 4px 12px;
+    border-radius: 9999px;
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.02em;
+    white-space: nowrap;
+}
+
+.live-pill.moving {
+    background: var(--secondary-pill-bg);
+    color: var(--secondary);
+}
+
+.live-pill.stationary {
+    background: var(--surface-container);
+    color: var(--primary-container);
+}
+
+.live-pill.alert {
+    background: var(--error-bg);
+    color: var(--error);
+}
+
+.live-pulse-dot {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: var(--secondary);
+    animation: liveDotPulse 1.8s infinite;
+}
+
+@keyframes liveDotPulse {
+    0%, 100% { opacity: 1; transform: scale(1); }
+    50% { opacity: 0.4; transform: scale(0.85); }
+}
+
+.updated-counter {
+    font-size: 11px;
+    color: var(--text-muted);
+    font-family: var(--font-mono);
+}
+
+/* Answer #1: Current Location Card */
+.location-card {
+    gap: 4px;
+}
+
+.current-location-headline {
+    font-size: 20px;
+    font-weight: 700;
+    color: var(--on-surface);
+    letter-spacing: -0.01em;
+    line-height: 1.25;
+}
+
+.current-location-coords {
+    font-size: 12px;
+    color: var(--text-muted);
+    font-family: var(--font-mono);
+}
+
+/* Answer #4: Journey Progress Card */
+.progress-card {
+    gap: 10px;
+}
+
+.card-header-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.progress-pct-badge {
+    font-size: 14px;
+    font-weight: 700;
+    color: var(--primary);
+}
+
+.progress-track {
+    width: 100%;
+    height: 10px;
+    background: var(--surface-container-highest);
+    border-radius: 9999px;
+    overflow: hidden;
+    position: relative;
+}
+
+.progress-bar-fill {
+    height: 100%;
+    background: var(--secondary);
+    border-radius: 9999px;
+    transition: width 0.7s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.progress-metrics-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    font-size: 13px;
+    color: var(--on-surface-variant);
+    font-weight: 500;
+    padding-top: 2px;
+}
+
+.progress-distance-text {
+    font-family: var(--font-mono);
+}
+
+.final-eta-text {
+    font-weight: 600;
+    color: var(--primary);
+}
+
+/* Answer #3: Next Checkpoint Card */
+.next-checkpoint-card {
+    background: var(--primary-container);
+    color: var(--on-primary);
+    border-radius: 12px;
+    padding: 16px;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    box-shadow: 0 4px 16px rgba(30, 58, 138, 0.18);
+}
+
+.next-cp-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.next-cp-eyebrow {
+    font-size: 11px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: var(--on-primary-container);
+}
+
+.next-cp-arrow {
+    color: var(--on-primary-container);
+    font-size: 18px;
+    line-height: 1;
+}
+
+.next-cp-content {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+}
+
+.next-cp-title {
+    font-size: 20px;
+    font-weight: 700;
+    color: var(--on-primary);
+    line-height: 1.25;
+}
+
+.next-cp-meta {
+    font-size: 14px;
+    color: var(--on-primary-container);
+    font-weight: 400;
+}
+
+/* Route Milestones Timeline */
+.milestones-section {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    padding-top: 4px;
+}
+
+.milestones-timeline {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    padding-left: 2px;
+}
+
+.milestone-row {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    font-size: 14px;
+}
+
+.milestone-icon-slot {
+    width: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+}
+
+.milestone-dot-passed {
+    color: var(--secondary);
+    font-size: 19px;
+    line-height: 1;
+}
+
+.milestone-dot-current {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    background: var(--secondary);
+    box-shadow: 0 0 0 4px rgba(0, 108, 73, 0.2);
+    animation: liveDotPulse 1.8s infinite;
+}
+
+.milestone-dot-next {
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    background: var(--primary);
+    box-shadow: 0 0 0 4px var(--primary-fixed);
+}
+
+.milestone-dot-future {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    background: var(--outline);
+    opacity: 0.6;
+}
+
+.milestone-body {
+    flex: 1;
+    min-width: 0;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+}
+
+.milestone-label {
+    font-size: 14px;
+    font-weight: 500;
+    color: var(--on-surface);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.milestone-label.current {
+    font-weight: 700;
+    color: var(--secondary);
+}
+
+.milestone-label.next {
+    font-weight: 700;
+    color: var(--primary);
+}
+
+.milestone-time {
+    font-size: 13px;
+    color: var(--on-surface-variant);
+    font-family: var(--font-mono);
+    flex-shrink: 0;
+}
+
+.milestone-time.highlight {
+    font-weight: 700;
+    color: var(--primary);
+}
+
+/* ==========================================================================
+   Bottom Section: Answer #5 (Guardian Safety State Dock)
+   ========================================================================== */
+.sidebar-bottom-section {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    padding-top: 16px;
+    margin-top: 16px;
+}
+
+.safety-dock-card {
+    border-radius: 14px;
+    padding: 16px;
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    transition: all 0.3s ease;
+    border: 1px solid var(--border);
+}
+
+.safety-dock-card.fine {
+    background: var(--surface-container-low);
+    border-color: rgba(108, 248, 187, 0.4);
+}
+
+.safety-dock-card.fine .safety-icon-badge {
+    background: rgba(0, 108, 73, 0.15);
+    color: var(--secondary);
+}
+
+.safety-dock-card.stationary-warn {
+    background: var(--warning-bg);
+    border-color: var(--warning-border);
+}
+
+.safety-dock-card.stationary-warn .safety-icon-badge {
+    background: var(--warning-icon-bg);
+    color: var(--warning);
+}
+
+.safety-dock-card.escalated {
+    background: var(--error-bg);
+    border-color: var(--error-border);
+}
+
+.safety-dock-card.escalated .safety-icon-badge {
+    background: var(--error-icon-bg);
+    color: var(--error);
+}
+
+.safety-icon-badge {
+    width: 42px;
+    height: 42px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+}
+
+.safety-text-group {
+    flex: 1;
+    min-width: 0;
+}
+
+.safety-headline {
+    font-size: 14px;
+    font-weight: 700;
+    color: var(--on-surface);
+    margin-bottom: 2px;
+}
+
+.safety-subtext {
+    font-size: 12px;
+    color: var(--on-surface-variant);
+    line-height: 1.4;
+}
+
+/* Sidebar Footer */
+.monitor-footer {
+    text-align: center;
+    font-size: 12px;
+    color: var(--text-muted);
+    padding-top: 4px;
+}
+
+/* ==========================================================================
+   Responsive Breakpoints
+   ========================================================================== */
+@media (max-width: 960px) {
+    body.monitor-body {
+        height: auto;
+        overflow: auto;
+    }
+
+    .monitor-layout {
+        flex-direction: column;
+        overflow: visible;
+    }
+
+    .map-container {
+        height: 440px;
+        flex: none;
+    }
+
+    .monitor-sidebar {
+        width: 100%;
+        height: auto;
+        border-left: none;
+        border-top: 1px solid var(--border);
+        box-shadow: none;
+        padding: 20px;
+    }
+
+}

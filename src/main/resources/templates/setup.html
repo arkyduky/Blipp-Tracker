@@ -1,0 +1,413 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="utf-8"/>
+    <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+    <title>Blipp — Start a ride</title>
+    <!-- Google Fonts: Inter & Material Symbols Outlined -->
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" rel="stylesheet"/>
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@100..900&display=swap" rel="stylesheet"/>
+    <style>
+        @layer base {
+            html, body { margin: 0; padding: 0; }
+            body { overscroll-behavior: none; }
+            main > :first-child { margin-top: 0 !important; }
+            main > :last-child { margin-bottom: 0 !important; }
+        }
+        ::-webkit-scrollbar { display: none; }
+        /* Existing project brand icon styling matching Live Monitor (location.html / monitor.css) */
+        .brand-group {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            text-decoration: none;
+        }
+        .brand-icon-box {
+            width: 34px;
+            height: 34px;
+            border-radius: 8px;
+            background: #1e3a8a;
+            color: #ffffff;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+        }
+        .brand-title {
+            font-size: 20px;
+            font-weight: 700;
+            color: #0b1c30;
+            letter-spacing: -0.02em;
+        }
+    </style>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "on-primary-fixed-variant": "#3f465c",
+                        "on-background": "#0b1c30",
+                        "tertiary-fixed-dim": "#93ccff",
+                        "surface-variant": "#d3e4fe",
+                        "surface-bright": "#f8f9ff",
+                        "primary-fixed": "#dae2fd",
+                        "on-error": "#ffffff",
+                        "on-tertiary-container": "#188ace",
+                        "on-surface-variant": "#45464d",
+                        "inverse-surface": "#213145",
+                        "surface-container-highest": "#d3e4fe",
+                        "surface-container": "#e5eeff",
+                        "primary-container": "#131b2e",
+                        "tertiary-container": "#001d31",
+                        "on-tertiary-fixed-variant": "#004b73",
+                        "surface": "#f8f9ff",
+                        "on-primary-fixed": "#131b2e",
+                        "secondary": "#4e45d5",
+                        "error-container": "#ffdad6",
+                        "surface-tint": "#565e74",
+                        "outline-variant": "#c6c6cd",
+                        "surface-container-lowest": "#ffffff",
+                        "on-primary": "#ffffff",
+                        "inverse-primary": "#bec6e0",
+                        "on-secondary-container": "#fffbff",
+                        "on-surface": "#0b1c30",
+                        "tertiary-fixed": "#cce5ff",
+                        "inverse-on-surface": "#eaf1ff",
+                        "tertiary": "#000000",
+                        "on-error-container": "#93000a",
+                        "secondary-container": "#6860ef",
+                        "surface-container-high": "#dce9ff",
+                        "background": "#f8f9ff",
+                        "outline": "#76777d",
+                        "on-secondary": "#ffffff",
+                        "secondary-fixed": "#e3dfff",
+                        "on-secondary-fixed": "#100069",
+                        "on-secondary-fixed-variant": "#372abf",
+                        "primary-fixed-dim": "#bec6e0",
+                        "primary": "#000000",
+                        "secondary-fixed-dim": "#c3c0ff",
+                        "error": "#ba1a1a",
+                        "on-tertiary": "#ffffff",
+                        "surface-dim": "#cbdbf5",
+                        "surface-container-low": "#eff4ff",
+                        "on-tertiary-fixed": "#001d31",
+                        "on-primary-container": "#7c839b"
+                    },
+                    borderRadius: {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                    spacing: {
+                        "margin-desktop": "3rem",
+                        "space-xl": "2.5rem",
+                        "space-sm": "0.5rem",
+                        "space-lg": "1.5rem",
+                        "space-xs": "0.25rem",
+                        "space-md": "1rem",
+                        "margin-tablet": "2rem",
+                        "gutter": "1rem",
+                        "margin": "1rem",
+                        "gutter-desktop": "1.5rem"
+                    },
+                    fontFamily: {
+                        "headline-md": ["Inter"],
+                        "headline-sm": ["Inter"],
+                        "body-lg": ["Inter"],
+                        "label-sm": ["Inter"],
+                        "headline-lg": ["Inter"],
+                        "label-lg": ["Inter"],
+                        "display": ["Inter"],
+                        "headline-lg-mobile": ["Inter"],
+                        "body-md": ["Inter"]
+                    },
+                    fontSize: {
+                        "headline-md": ["22px", { lineHeight: "28px", letterSpacing: "-0.015em", fontWeight: "600" }],
+                        "headline-sm": ["18px", { lineHeight: "24px", letterSpacing: "-0.01em", fontWeight: "600" }],
+                        "body-lg": ["16px", { lineHeight: "24px", fontWeight: "400" }],
+                        "label-sm": ["11px", { lineHeight: "14px", letterSpacing: "0.06em", fontWeight: "600" }],
+                        "headline-lg": ["32px", { lineHeight: "40px", letterSpacing: "-0.02em", fontWeight: "600" }],
+                        "label-lg": ["14px", { lineHeight: "20px", letterSpacing: "0.01em", fontWeight: "500" }],
+                        "display": ["48px", { lineHeight: "56px", letterSpacing: "-0.025em", fontWeight: "700" }],
+                        "headline-lg-mobile": ["26px", { lineHeight: "32px", letterSpacing: "-0.015em", fontWeight: "600" }],
+                        "body-md": ["14px", { lineHeight: "20px", fontWeight: "400" }]
+                    }
+                }
+            }
+        };
+    </script>
+</head>
+<body class="bg-background font-body-md text-on-surface antialiased min-h-screen flex flex-col justify-between selection:bg-secondary-fixed selection:text-on-secondary-fixed">
+    <!-- Fixed Top Header -->
+    <header class="fixed top-0 w-full z-50 bg-surface/80 backdrop-blur-xl shadow-[0_1px_8px_rgba(0,0,0,0.04)]">
+        <div class="h-16 max-w-7xl mx-auto px-6 lg:px-12 flex items-center justify-between">
+            <div class="brand-group">
+                <div class="brand-icon-box">
+                    <span class="material-symbols-outlined text-[20px]">shield</span>
+                </div>
+                <span class="brand-title">Blipp</span>
+            </div>
+            <div class="flex items-center gap-4">
+                <div class="hidden sm:flex items-center gap-2 px-3 py-1.5 rounded-full bg-secondary-fixed text-on-secondary-fixed-variant">
+                    <span class="relative flex h-2 w-2">
+                        <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-secondary opacity-75"></span>
+                        <span class="relative inline-flex rounded-full h-2 w-2 bg-secondary"></span>
+                    </span>
+                    <span class="font-label-sm text-label-sm uppercase tracking-wider font-semibold">Solo Rider Protection Active</span>
+                </div>
+                <div class="w-8 h-8 rounded-full bg-primary flex items-center justify-center">
+                    <span class="material-symbols-outlined text-on-primary text-[18px]">person</span>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content Area -->
+    <main class="w-full pt-16 bg-background flex-1 flex flex-col items-center justify-center">
+        <div class="flex flex-col w-full py-10 px-4 sm:px-6 lg:px-8 items-center">
+            <div class="w-full max-w-2xl flex flex-col gap-8">
+                <!-- BRAND / INTRO -->
+                <header class="flex flex-col items-center text-center">
+                    <div class="relative mb-4 flex items-center justify-center">
+                        <div class="absolute -inset-2 bg-secondary/10 rounded-full blur-xl"></div>
+                        <div class="relative w-16 h-16 rounded-2xl shadow-md flex items-center justify-center bg-[#1e3a8a] text-white">
+                            <span class="material-symbols-outlined text-[32px]">shield</span>
+                        </div>
+                    </div>
+                    <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-secondary-fixed text-on-secondary-fixed-variant mb-3">
+                        <span class="w-1.5 h-1.5 rounded-full bg-secondary"></span>
+                        <span class="font-label-sm text-label-sm uppercase tracking-wider font-semibold">No password required · Telegram Chat ID powered</span>
+                    </div>
+                    <h1 class="font-headline-lg text-headline-lg text-on-surface tracking-tight mb-2">
+                        Solo-rider safety, simplified.
+                    </h1>
+                    <p class="font-body-lg text-body-lg text-on-surface-variant max-w-xl">
+                        Blipp monitors your ride in the background and immediately alerts your emergency contact if you don't respond to a stationary safety check.
+                    </p>
+                </header>
+
+                <!-- ERROR BANNER IF PRESENT -->
+                <div th:if="${error}" class="w-full p-4 rounded-xl bg-red-50 border border-red-300 text-red-700 text-sm font-medium flex items-center gap-2">
+                    <span class="material-symbols-outlined text-[20px] text-red-600">error</span>
+                    <span th:text="${error}">Route creation failed</span>
+                </div>
+
+                <!-- SECTION 1: CONNECT TELEGRAM -->
+                <section class="bg-surface-container-lowest rounded-2xl shadow-sm p-6 sm:p-8 flex flex-col gap-6">
+                    <div class="flex items-start justify-between gap-4">
+                        <div>
+                            <div class="flex items-center gap-2.5 mb-1.5">
+                                <div class="w-7 h-7 rounded-lg bg-surface-container flex items-center justify-center text-secondary">
+                                    <span class="material-symbols-outlined text-[18px]">send</span>
+                                </div>
+                                <h2 class="font-headline-sm text-headline-sm text-on-surface">Connect Telegram</h2>
+                            </div>
+                            <p class="font-body-md text-body-md text-on-surface-variant">
+                                Blipp uses Telegram to communicate with you during your ride.
+                            </p>
+                        </div>
+                        <a class="shrink-0 inline-flex items-center gap-1.5 px-4 py-2.5 rounded-xl bg-secondary text-on-secondary font-label-lg text-label-lg transition-transform hover:opacity-95 active:scale-95 shadow-sm" href="https://t.me/blipp_alert_bot" rel="noopener noreferrer" target="_blank">
+                            <span>Open Blipp Bot</span>
+                            <span class="material-symbols-outlined text-[16px]">north_east</span>
+                        </a>
+                    </div>
+                    <!-- Step Badges Grid -->
+                    <div class="grid grid-cols-2 sm:grid-cols-4 gap-2.5">
+                        <div class="p-3 rounded-xl bg-surface-container-low flex flex-col gap-1">
+                            <span class="font-label-sm text-label-sm text-secondary font-semibold">01</span>
+                            <span class="font-label-sm text-label-sm text-on-surface font-medium">Open Blipp Bot</span>
+                        </div>
+                        <div class="p-3 rounded-xl bg-surface-container-low flex flex-col gap-1">
+                            <span class="font-label-sm text-label-sm text-secondary font-semibold">02</span>
+                            <span class="font-label-sm text-label-sm text-on-surface font-medium">Tap Start</span>
+                        </div>
+                        <div class="p-3 rounded-xl bg-surface-container-low flex flex-col gap-1">
+                            <span class="font-label-sm text-label-sm text-secondary font-semibold">03</span>
+                            <span class="font-label-sm text-label-sm text-on-surface font-medium">Send "chat id"</span>
+                        </div>
+                        <div class="p-3 rounded-xl bg-surface-container-low flex flex-col gap-1">
+                            <span class="font-label-sm text-label-sm text-secondary font-semibold">04</span>
+                            <span class="font-label-sm text-label-sm text-on-surface font-medium">Paste ID below</span>
+                        </div>
+                    </div>
+                    <!-- Telegram Bot Preview Bubble Mockup -->
+                    <div class="p-4 sm:p-5 rounded-xl bg-surface-container-low flex flex-col gap-3">
+                        <div class="flex items-center justify-between text-on-surface-variant font-label-sm text-label-sm">
+                            <div class="flex items-center gap-1.5">
+                                <span class="w-2 h-2 rounded-full bg-secondary"></span>
+                                <span class="font-semibold text-on-surface">@blipp_alert_bot</span>
+                            </div>
+                            <span>Direct Session</span>
+                        </div>
+                        <div class="flex flex-col gap-2.5 pt-1">
+                            <!-- Rider message -->
+                            <div class="self-end max-w-[75%] rounded-2xl rounded-tr-sm bg-secondary px-3.5 py-2 text-on-secondary shadow-sm">
+                                <div class="flex items-end gap-2">
+                                    <span class="font-body-md text-body-md">chat id</span>
+                                    <span class="font-label-sm text-[10px] opacity-75 leading-none">12:04</span>
+                                </div>
+                            </div>
+                            <!-- Bot message -->
+                            <div class="self-start max-w-[85%] rounded-2xl rounded-tl-sm bg-surface-container-lowest px-4 py-3 shadow-sm flex flex-col gap-1.5">
+                                <span class="font-body-md text-body-md text-on-surface">Your Telegram Chat ID is:</span>
+                                <div class="inline-flex items-center justify-between gap-3 bg-surface-container-high px-3 py-1.5 rounded-lg">
+                                    <code class="font-mono text-headline-sm font-semibold tracking-wider text-on-surface">5033200665</code>
+                                    <span class="font-label-sm text-[10px] text-on-surface-variant uppercase tracking-wider">Tap to copy</span>
+                                </div>
+                                <div class="self-end flex items-center gap-1 text-on-surface-variant font-label-sm text-[10px] leading-none pt-0.5">
+                                    <span>12:04</span>
+                                    <span class="material-symbols-outlined text-[12px] text-secondary">done_all</span>
+                                </div>
+                            </div>
+                        </div>
+                        <span class="font-label-sm text-label-sm text-on-surface-variant text-center pt-1">
+                            Illustrative example — retrieve your unique ID from the bot.
+                        </span>
+                    </div>
+                </section>
+
+                <!-- FORM: SECTIONS 2, 3, 4, 5 -->
+                <form action="/start" method="post" id="setupForm" class="flex flex-col gap-8">
+                    <!-- SECTION 2: YOUR DETAILS -->
+                    <section class="bg-surface-container-lowest rounded-2xl shadow-sm p-6 sm:p-8 flex flex-col gap-5">
+                        <div class="flex items-center gap-2.5">
+                            <div class="w-7 h-7 rounded-lg bg-surface-container flex items-center justify-center text-on-surface">
+                                <span class="material-symbols-outlined text-[18px]">sports_motorsports</span>
+                            </div>
+                            <h2 class="font-headline-sm text-headline-sm text-on-surface">Your details</h2>
+                        </div>
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                            <div class="flex flex-col gap-1.5">
+                                <label class="font-label-lg text-label-lg text-on-surface font-semibold" for="name">
+                                    Rider name
+                                </label>
+                                <input class="h-12 px-3.5 rounded-xl bg-surface-container-low text-on-surface placeholder:text-on-surface-variant/60 font-body-md text-body-md focus:bg-surface-container-lowest focus:shadow-md focus:outline-none transition-all" id="name" name="name" th:value="${name}" placeholder="e.g. Amit" type="text" required/>
+                            </div>
+                            <div class="flex flex-col gap-1.5">
+                                <div class="flex items-center justify-between">
+                                    <label class="font-label-lg text-label-lg text-on-surface font-semibold" for="telegramChatId">
+                                        Rider Telegram Chat ID
+                                    </label>
+                                    <span class="font-label-sm text-label-sm text-secondary font-semibold uppercase tracking-wider">Required</span>
+                                </div>
+                                <input class="h-12 px-3.5 rounded-xl bg-surface-container-low text-on-surface font-mono placeholder:font-body-md placeholder:text-on-surface-variant/60 font-body-md text-body-md focus:bg-surface-container-lowest focus:shadow-md focus:outline-none transition-all" id="telegramChatId" name="telegramChatId" th:value="${telegramChatId}" inputmode="numeric" placeholder="e.g. 5033200665" type="text" required/>
+                            </div>
+                        </div>
+                        <div class="flex items-center gap-2 text-on-surface-variant font-label-sm text-label-sm">
+                            <span class="material-symbols-outlined text-[16px] text-secondary">info</span>
+                            <span>Send <code class="px-1.5 py-0.5 rounded bg-surface-container font-mono text-[10px] text-on-surface">chat id</code> to the Blipp bot to retrieve yours.</span>
+                        </div>
+                    </section>
+
+                    <!-- SECTION 3: EMERGENCY CONTACT -->
+                    <section class="bg-surface-container-lowest rounded-2xl shadow-sm p-6 sm:p-8 flex flex-col gap-5">
+                        <div>
+                            <div class="flex items-center gap-2.5 mb-1.5">
+                                <div class="w-7 h-7 rounded-lg bg-surface-container flex items-center justify-center text-error">
+                                    <span class="material-symbols-outlined text-[18px]">favorite</span>
+                                </div>
+                                <h2 class="font-headline-sm text-headline-sm text-on-surface">Emergency contact</h2>
+                            </div>
+                            <p class="font-body-md text-body-md text-on-surface-variant">
+                                This person will receive an alert if you don't respond to a safety check.
+                            </p>
+                        </div>
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                            <div class="flex flex-col gap-1.5">
+                                <label class="font-label-lg text-label-lg text-on-surface font-semibold" for="contact-name">
+                                    Emergency contact name
+                                </label>
+                                <input class="h-12 px-3.5 rounded-xl bg-surface-container-low text-on-surface placeholder:text-on-surface-variant/60 font-body-md text-body-md focus:bg-surface-container-lowest focus:shadow-md focus:outline-none transition-all" id="contact-name" placeholder="e.g. Parent / Friend" type="text"/>
+                            </div>
+                            <div class="flex flex-col gap-1.5">
+                                <label class="font-label-lg text-label-lg text-on-surface font-semibold" for="emergencyContactChatId">
+                                    Emergency contact Telegram Chat ID
+                                </label>
+                                <input class="h-12 px-3.5 rounded-xl bg-surface-container-low text-on-surface font-mono placeholder:font-body-md placeholder:text-on-surface-variant/60 font-body-md text-body-md focus:bg-surface-container-lowest focus:shadow-md focus:outline-none transition-all" id="emergencyContactChatId" name="emergencyContactChatId" th:value="${emergencyContactChatId}" inputmode="numeric" placeholder="e.g. 5033200665" type="text" required/>
+                            </div>
+                        </div>
+                        <div class="flex items-start gap-2 text-on-surface-variant font-label-sm text-label-sm">
+                            <span class="material-symbols-outlined text-[16px] text-secondary shrink-0 mt-0.5">contact_phone</span>
+                            <span>Your contact also needs to open <span class="font-semibold text-on-surface">@blipp_alert_bot</span> and send <code class="px-1.5 py-0.5 rounded bg-surface-container font-mono text-[10px] text-on-surface">chat id</code> so Blipp can message them in an emergency.</span>
+                        </div>
+                    </section>
+
+                    <!-- SECTION 4: SAFETY TIMING -->
+                    <section class="bg-surface-container-lowest rounded-2xl shadow-sm p-6 sm:p-8 flex flex-col gap-5">
+                        <div>
+                            <div class="flex items-center gap-2.5 mb-1.5">
+                                <div class="w-7 h-7 rounded-lg bg-surface-container flex items-center justify-center text-on-surface">
+                                    <span class="material-symbols-outlined text-[18px]">timer</span>
+                                </div>
+                                <h2 class="font-headline-sm text-headline-sm text-on-surface">Safety timing</h2>
+                            </div>
+                            <p class="font-body-md text-body-md text-on-surface-variant">
+                                These values determine when Blipp asks you to confirm your safety if stationary.
+                            </p>
+                        </div>
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                            <!-- Tolerance Field -->
+                            <div class="p-4 rounded-xl bg-surface-container-low flex flex-col gap-2">
+                                <label class="font-label-lg text-label-lg text-on-surface font-semibold" for="stationaryToleranceSeconds">
+                                    Stationary tolerance (seconds)
+                                </label>
+                                <div class="relative flex items-center">
+                                    <input class="w-full h-11 px-3.5 rounded-lg bg-surface-container-lowest text-on-surface font-medium font-body-md text-body-md shadow-sm focus:outline-none" id="stationaryToleranceSeconds" name="stationaryToleranceSeconds" type="number" min="5" step="1" th:value="${stationaryToleranceSeconds != null ? stationaryToleranceSeconds : 25}" required/>
+                                    <span class="material-symbols-outlined absolute right-3 text-[18px] text-on-surface-variant pointer-events-none">speed</span>
+                                </div>
+                                <span class="font-label-sm text-label-sm text-on-surface-variant">
+                                    How long motion can be stopped before you're asked if you're okay.
+                                </span>
+                            </div>
+                            <!-- Grace Period Field -->
+                            <div class="p-4 rounded-xl bg-surface-container-low flex flex-col gap-2">
+                                <label class="font-label-lg text-label-lg text-on-surface font-semibold" for="gracePeriodSeconds">
+                                    Grace period (seconds)
+                                </label>
+                                <div class="relative flex items-center">
+                                    <input class="w-full h-11 px-3.5 rounded-lg bg-surface-container-lowest text-on-surface font-medium font-body-md text-body-md shadow-sm focus:outline-none" id="gracePeriodSeconds" name="gracePeriodSeconds" type="number" min="5" step="1" th:value="${gracePeriodSeconds != null ? gracePeriodSeconds : 40}" required/>
+                                    <span class="material-symbols-outlined absolute right-3 text-[18px] text-on-surface-variant pointer-events-none">notifications_active</span>
+                                </div>
+                                <span class="font-label-sm text-label-sm text-on-surface-variant">
+                                    How long you have to reply before your emergency contact is alerted.
+                                </span>
+                            </div>
+                        </div>
+                    </section>
+
+                    <!-- SECTION 5: FINAL ACTION -->
+                    <div class="flex flex-col items-center gap-3 pt-2 pb-6">
+                        <button class="w-full h-14 rounded-2xl bg-primary text-on-primary font-headline-sm text-headline-sm flex items-center justify-center gap-3 shadow-md hover:opacity-90 active:scale-[0.99] transition-all cursor-pointer" id="start-ride-btn" type="submit">
+                            <span>Start ride</span>
+                            <span class="relative flex h-3 w-3">
+                                <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-surface opacity-75"></span>
+                                <span class="relative inline-flex rounded-full h-3 w-3 bg-surface"></span>
+                            </span>
+                            <span class="material-symbols-outlined text-[20px]">arrow_forward</span>
+                        </button>
+                        <div class="flex items-center gap-1.5 text-on-surface-variant font-label-sm text-label-sm">
+                            <span class="material-symbols-outlined text-[15px]">tune</span>
+                            <span>Your safety settings can be changed before your next ride.</span>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="w-full bg-surface-container-low py-6">
+        <div class="max-w-7xl mx-auto px-6 lg:px-12 flex flex-col sm:flex-row items-center justify-between gap-3 text-center sm:text-left">
+            <div class="flex items-center justify-center gap-2 text-on-surface-variant font-label-sm text-label-sm">
+                <span class="material-symbols-outlined text-[16px] text-secondary">lock</span>
+                <span>End-to-End Encrypted Telegram Relay Bridge</span>
+            </div>
+            <span class="text-on-surface-variant font-label-sm text-label-sm tracking-normal">&copy; 2024 Blipp Safety Telemetry. Zero Friction Dispatch.</span>
+        </div>
+    </footer>
+</body>
+</html>

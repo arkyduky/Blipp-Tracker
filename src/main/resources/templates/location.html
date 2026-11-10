@@ -1,0 +1,224 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title th:text="${ride != null and ride.rider != null ? ride.rider.name + ' — Live Monitor | Blipp' : 'Blipp — Live Monitor'}">Blipp — Live Monitor</title>
+    <!-- Google Fonts: Inter & IBM Plex Mono -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=IBM+Plex+Mono:wght@500;600&display=swap" rel="stylesheet">
+    <!-- Google Material Symbols Outlined -->
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" rel="stylesheet">
+    <!-- Leaflet CSS -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin=""/>
+    <!-- Monitor Stylesheet -->
+    <link rel="stylesheet" href="/css/monitor.css">
+</head>
+<body class="monitor-body">
+    <!-- Top Header (Stitch Navigation Bar) -->
+    <header class="monitor-header">
+        <div class="header-left">
+            <div class="brand-group">
+                <div class="brand-icon-box">
+                    <span class="material-symbols-outlined text-[20px]">shield</span>
+                </div>
+                <span class="brand-title">Blipp</span>
+            </div>
+            <nav class="header-nav">
+                <span class="nav-tab active">Live</span>
+            </nav>
+        </div>
+
+        <div class="header-right">
+            <!-- Safety Connections Profile Avatar Button + Popover -->
+            <div class="profile-wrapper">
+                <button id="safetyConnectionsBtn" type="button" class="profile-btn" title="Safety Connections" aria-label="Safety Connections">
+                    <span class="material-symbols-outlined">person</span>
+                </button>
+
+                <!-- Safety Connections Popover -->
+                <div id="safetyConnectionsPopover" class="connections-popover hidden" role="dialog" aria-labelledby="popoverTitle">
+                    <div class="popover-header">
+                        <div class="popover-heading" id="popoverTitle">
+                            <span class="material-symbols-outlined text-primary">security</span>
+                            <span>Safety Connections</span>
+                        </div>
+                        <button id="closeConnectionsPopoverBtn" type="button" class="popover-close-btn" aria-label="Close popover">
+                            <span class="material-symbols-outlined">close</span>
+                        </button>
+                    </div>
+
+                    <div class="popover-body">
+                        <!-- Rider Telegram -->
+                        <div class="popover-field">
+                            <div class="field-meta">
+                                <span class="field-label">Rider Telegram</span>
+                                <span id="riderStatusChip" class="connection-chip"
+                                      th:classappend="${ride != null and ride.rider != null and ride.rider.telegramChatId != null and !#strings.isEmpty(ride.rider.telegramChatId)} ? 'connected' : 'unlinked'"
+                                      th:text="${ride != null and ride.rider != null and ride.rider.telegramChatId != null and !#strings.isEmpty(ride.rider.telegramChatId)} ? '● Connected' : 'Not linked'">● Connected</span>
+                            </div>
+                            <div class="field-input-row">
+                                <input type="text" id="riderTelegramInput" class="field-input" placeholder="Telegram Chat ID"
+                                       th:value="${ride != null and ride.rider != null ? ride.rider.telegramChatId : ''}">
+                                <button type="button" id="saveRiderTelegramBtn" class="field-save-btn">Save</button>
+                            </div>
+                        </div>
+
+                        <!-- Emergency Contact -->
+                        <div class="popover-field">
+                            <div class="field-meta">
+                                <span class="field-label">Emergency Contact</span>
+                                <span id="contactStatusChip" class="connection-chip"
+                                      th:classappend="${ride != null and ride.rider != null and ride.rider.emergencyContactChatId != null and !#strings.isEmpty(ride.rider.emergencyContactChatId)} ? 'connected' : 'unlinked'"
+                                      th:text="${ride != null and ride.rider != null and ride.rider.emergencyContactChatId != null and !#strings.isEmpty(ride.rider.emergencyContactChatId)} ? '● Connected' : 'Not linked'">● Connected</span>
+                            </div>
+                            <div class="field-input-row">
+                                <input type="text" id="emergencyContactInput" class="field-input" placeholder="Telegram Chat ID"
+                                       th:value="${ride != null and ride.rider != null ? ride.rider.emergencyContactChatId : ''}">
+                                <button type="button" id="saveEmergencyContactBtn" class="field-save-btn">Save</button>
+                            </div>
+                        </div>
+
+                        <div class="popover-note">
+                            <span class="material-symbols-outlined note-icon">info</span>
+                            <p>Telegram is used for rider check-ins and automated emergency alerts.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Workspace: Edge-to-Edge Map Canvas + High-Elevation Side Dock -->
+    <main class="monitor-layout">
+        <!-- Primary Map Canvas (Edge-to-Edge Spatial Layer) -->
+        <section class="map-container">
+            <!-- GPS Status Overlay Pill (Top-Left) -->
+            <div class="map-status-overlay">
+                <span id="gpsStatusBadge" class="gps-badge waiting">
+                    <span class="gps-badge-dot"></span>
+                    <span id="gpsBadgeText">Waiting for rider location...</span>
+                </span>
+            </div>
+
+            <!-- Leaflet Map Container -->
+            <div id="map"></div>
+
+            <!-- Floating Map Controls (Bottom-Left: Recenter + Zoom Pod) -->
+            <div class="map-floating-controls">
+                <button type="button" id="recenterBtn" class="map-control-btn recenter-btn" title="Focus on Rider">
+                    <span class="material-symbols-outlined text-[20px]">my_location</span>
+                    <span id="recenterText" class="recenter-label" th:text="${ride != null and ride.rider != null ? 'Focus on ' + ride.rider.name : 'Focus on Rider'}">Focus on Rider</span>
+                </button>
+                <div class="map-zoom-group">
+                    <button type="button" id="zoomInBtn" class="map-control-btn zoom-btn" title="Zoom in">
+                        <span class="material-symbols-outlined text-[20px]">add</span>
+                    </button>
+                    <button type="button" id="zoomOutBtn" class="map-control-btn zoom-btn" title="Zoom out">
+                        <span class="material-symbols-outlined text-[20px]">remove</span>
+                    </button>
+                </div>
+            </div>
+        </section>
+
+        <!-- Calm Guardian Side Dock (Floating High-Elevation Telemetry Column) -->
+        <aside class="monitor-sidebar">
+            <div class="sidebar-top-section">
+                <!-- Traveler Header Card -->
+                <div class="rider-header-card">
+                    <div class="rider-info-left">
+                        <div class="rider-avatar-box">
+                            <span class="material-symbols-outlined text-[24px]">directions_bike</span>
+                        </div>
+                        <div class="rider-name-box">
+                            <h1 id="riderName" class="rider-name" th:text="${ride != null and ride.rider != null ? ride.rider.name : 'Rider'}">Rider</h1>
+                            <p id="routeSubtitle" class="route-subtitle">Awaiting route submission from rider...</p>
+                        </div>
+                    </div>
+                    <div class="rider-status-right">
+                        <div id="riderLivePill" class="live-pill stationary">
+                            <span class="live-pulse-dot"></span>
+                            <span id="riderLiveText">Waiting for route</span>
+                        </div>
+                        <span id="updatedCounter" class="updated-counter">No GPS yet</span>
+                    </div>
+                </div>
+
+                <!-- Answer #1: Where is the rider? (Current Location) -->
+                <div class="monitor-card location-card">
+                    <span class="card-eyebrow">Current Location</span>
+                    <div id="currentLocationName" class="current-location-headline">Awaiting route submission from rider...</div>
+                    <span id="currentLocationCoords" class="current-location-coords">GPS coordinates pending</span>
+                </div>
+
+                <!-- Answer #4: How far along is the journey? (Journey Progress) -->
+                <div class="monitor-card progress-card">
+                    <div class="card-header-row">
+                        <span class="card-eyebrow">Journey Progress</span>
+                        <span id="progressPct" class="progress-pct-badge">0% completed</span>
+                    </div>
+                    <div class="progress-track">
+                        <div id="progressBarFill" class="progress-bar-fill" style="width: 0%;"></div>
+                    </div>
+                    <div class="progress-metrics-row">
+                        <span id="progressDistance" class="progress-distance-text">0.0 / 0.0 km</span>
+                        <span id="progressFinalEta" class="final-eta-text">Final ETA: --:--</span>
+                    </div>
+                </div>
+
+                <!-- Answer #3: What checkpoint comes next? (Next Checkpoint) -->
+                <div class="next-checkpoint-card">
+                    <div class="next-cp-header">
+                        <span class="next-cp-eyebrow">Next Checkpoint</span>
+                        <span class="material-symbols-outlined next-cp-arrow">arrow_forward</span>
+                    </div>
+                    <div class="next-cp-content">
+                        <h2 id="nextCpName" class="next-cp-title">Awaiting route submission from rider...</h2>
+                        <p id="nextCpMeta" class="next-cp-meta">No checkpoints yet</p>
+                    </div>
+                </div>
+
+                <!-- Route Milestones List -->
+                <div class="milestones-section">
+                    <span class="card-eyebrow">Route Milestones</span>
+                    <div id="milestonesList" class="milestones-timeline">
+                        <div class="milestone-empty-state" style="padding: 16px 12px; color: #64748b; font-size: 13px; line-height: 1.5; text-align: center; border: 1px dashed #cbd5e1; border-radius: 8px; margin-top: 8px;">
+                            <span class="material-symbols-outlined" style="font-size: 24px; color: #94a3b8; display: block; margin-bottom: 4px;">alt_route</span>
+                            No checkpoints generated yet.<br>Rider must share a Google Maps route via Telegram to start monitoring.
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Bottom Section: Answer #5: Does the parent need to take action? (Guardian Safety State) -->
+            <div class="sidebar-bottom-section">
+                <div id="safetyBanner" class="safety-dock-card fine">
+                    <div id="safetyIconBadge" class="safety-icon-badge">
+                        <span id="safetyIcon" class="material-symbols-outlined text-[22px]">verified_user</span>
+                    </div>
+                    <div class="safety-text-group">
+                        <h3 id="safetyTitle" class="safety-headline">All Good &middot; No Action Required</h3>
+                        <p id="safetyDesc" class="safety-subtext">Quiet guardian monitoring active. We will notify you if anything changes.</p>
+                    </div>
+                </div>
+
+                <!-- Sidebar Footer -->
+                <footer class="monitor-footer">
+                    <p>&copy; 2024 Blipp. Quiet guardian monitoring.</p>
+                </footer>
+            </div>
+        </aside>
+    </main>
+
+    <!-- Inlined Ride Context for JavaScript -->
+    <script th:inline="javascript">
+        window.rideId = /*[[${ride != null ? ride.id : null}]]*/ null;
+        window.riderName = /*[[${ride != null and ride.rider != null ? ride.rider.name : 'Rider'}]]*/ 'Rider';
+    </script>
+    <!-- Leaflet JS -->
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
+    <!-- Live Monitor Controller -->
+    <script src="/js/monitor.js"></script>
+</body>
+</html>
