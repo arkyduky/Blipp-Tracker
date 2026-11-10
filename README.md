@@ -159,5 +159,3 @@ Potential improvements include:
 - Further testing under real-world riding conditions.
 
 ---
-
-*BLIPP — Route-aware. Context-aware. Safety-focused.*
